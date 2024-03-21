@@ -241,8 +241,15 @@ public:
         }
 
         std::string line;
+        bool first = true;
         while (std::getline(file, line))
         {
+            if (first)
+            {
+                first = false;
+                continue;
+            }
+
             List<int> *row = new List<int>();
             std::stringstream ss(line);
             int value;
