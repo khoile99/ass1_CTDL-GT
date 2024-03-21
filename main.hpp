@@ -13,4 +13,4 @@
 #include <cassert>
 
 using namespace std;
-#endif //DSA232_A1_MAIN_H
+#endif // DSA232_A1_MAIN_H
