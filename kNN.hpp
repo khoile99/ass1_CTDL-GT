@@ -19,7 +19,7 @@ class List
 public:
     ListNode<T> *head;
     int size;
-    // ~List() { clear(); };
+    ~List() { clear(); };
     List()
     {
         head = nullptr;
@@ -157,15 +157,80 @@ public:
 
 class Dataset
 {
-public:
+private:
     List<List<int> *> *data;
+
+public:
     Dataset()
     {
         data = new List<List<int> *>();
     };
-    // ~Dataset();
-    // Dataset(const Dataset &other);
-    // Dataset &operator=(const Dataset &other);
+    ~Dataset()
+    {
+        clear();
+    };
+    Dataset(const Dataset &other)
+    {
+        // Initialize data as a new list
+        data = new List<List<int> *>();
+
+        // Iterate through each row of the other dataset and copy its elements
+        for (int i = 0; i < other.data->length(); ++i)
+        {
+            List<int> *newRow = new List<int>();
+            List<int> *otherRow = other.data->get(i);
+
+            // Copy each element of the row
+            for (int j = 0; j < otherRow->length(); ++j)
+            {
+                newRow->push_back(otherRow->get(j));
+            }
+
+            // Add the copied row to the data list
+            data->push_back(newRow);
+        }
+    };
+    Dataset &operator=(const Dataset &other)
+    {
+        // Check for self-assignment
+        if (this != &other)
+        {
+            // Clear the existing data in the current object
+            clear();
+
+            // Iterate through each row of the other dataset and copy its elements
+            for (int i = 0; i < other.data->length(); ++i)
+            {
+                List<int> *newRow = new List<int>();
+                List<int> *otherRow = other.data->get(i);
+
+                // Copy each element of the row
+                for (int j = 0; j < otherRow->length(); ++j)
+                {
+                    newRow->push_back(otherRow->get(j));
+                }
+
+                // Add the copied row to the data list
+                data->push_back(newRow);
+            }
+        }
+
+        return *this; // Return a reference to the current object
+    };
+    void clear()
+    {
+        // Iterate over the data list and delete each list of integers
+        ListNode<List<int> *> *current = data->head;
+        while (current)
+        {
+            delete current->data;
+            ListNode<List<int> *> *temp = current;
+            current = current->next;
+            delete temp;
+        }
+        data->head = nullptr;
+        data->size = 0;
+    }
     bool loadFromCSV(const char *fileName)
     {
         std::ifstream file(fileName);
@@ -195,13 +260,94 @@ public:
         file.close();
         return true;
     };
-    // void printHead(int nRows = 5, int nCols = 5) const;
-    // void printTail(int nRows = 5, int nCols = 5) const;
-    // void getShape(int &nRows, int &nCols) const;
+    void printHead(int nRows = 5, int nCols = 5) const
+    {
+        nRows = std::min(nRows, data->length());
+        nCols = std::min(nCols, data->get(0)->length());
+        for (int i = 0; i < nRows; ++i)
+        {
+            for (int j = 0; j < nCols; ++j)
+            {
+                if (j == nCols - 1)
+                    std::cout << data->get(i)->get(j);
+                else
+                    std::cout << data->get(i)->get(j) << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    void printTail(int nRows = 5, int nCols = 5) const
+    {
+        int rowLength = data->length();
+        int colLength = data->get(0)->length();
+        nRows = std::min(nRows, rowLength);
+        nCols = std::min(nCols, colLength);
+        for (int i = rowLength - nRows; i < rowLength; ++i)
+        {
+            for (int j = colLength - nCols; j < colLength; ++j)
+            {
+                std::cout << data->get(i)->get(j) << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    void getShape(int &nRows, int &nCols) const
+    {
+        if (data->length() > 0)
+        {
+            nRows = data->length();
+            nCols = data->get(0)->length();
+        }
+        else
+        {
+            nRows = 0;
+            nCols = 0;
+        }
+    };
     // void columns() const;
     // bool drop(int axis = 0, int index = 0, std::string columns = "");
-    // Dataset extract(int startRow = 0, int endRow = -1, int startCol = 0, int endCol = -1) const;
-    // List<List<int> *> *getData() const;
+    Dataset extract(int startRow = 0, int endRow = -1, int startCol = 0, int endCol = -1) const
+    {
+        // Get the total number of rows and columns in the dataset
+        int totalRows = data->length();
+        int totalCols = (totalRows > 0) ? data->get(0)->length() : 0;
+
+        // Adjust endRow and endCol if they are -1
+        if (endRow == -1)
+        {
+            endRow = totalRows - 1;
+        }
+        if (endCol == -1)
+        {
+            endCol = totalCols - 1;
+        }
+
+        // Create a new dataset to store the extracted data
+        Dataset subset;
+
+        // Ensure startRow, endRow, startCol, and endCol are within valid range
+        startRow = std::max(0, std::min(startRow, totalRows - 1));
+        endRow = std::max(0, std::min(endRow, totalRows - 1));
+        startCol = std::max(0, std::min(startCol, totalCols - 1));
+        endCol = std::max(0, std::min(endCol, totalCols - 1));
+
+        // Extract the subset of data
+        for (int i = startRow; i <= endRow; ++i)
+        {
+            List<int> *row = new List<int>();
+            for (int j = startCol; j <= endCol; ++j)
+            {
+                row->push_back(data->get(i)->get(j));
+            }
+            subset.data->push_back(row);
+        }
+
+        return subset;
+    };
+    List<List<int> *> *getData() const
+    {
+        return data;
+    };
 };
 
 class kNN
