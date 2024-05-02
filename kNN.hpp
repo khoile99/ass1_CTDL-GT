@@ -529,57 +529,7 @@ public:
     {
         return this->nameCol;
     }
-    // Dataset predict(const Dataset& X_train, const Dataset& Y_train, const int k) const
-    // {
-    //     if(k > X_train.getData()->length())
-    //         throw std::out_of_range("get(): Out of range");
 
-    //     Dataset y_pred;
-    //         for (int i = 0; i < X_test.getData()->length(); i++) {
-    //     double* distances = new double[X_train.getData()->length()];
-    //     int* indices = new int[X_train.getData()->length()];
-
-    //     for (int j = 0; j < X_train.getData()->length(); j++) {
-    //         distances[j] = distanceEuclidean(X_test.getData()->get(i), X_train.getData()->get(j));
-    //         indices[j] = j;
-    //     }
-
-    //     // Sắp xếp các khoảng cách tăng dần và giữ indices tương ứng
-    //     for (int m = 0; m < X_train.getData()->length() - 1; m++) {
-    //         for (int n = 0; n < X_train.getData()->length() - m - 1; n++) {
-    //             if (distances[n] > distances[n + 1]) {
-    //                 std::swap(distances[n], distances[n + 1]);
-    //                 std::swap(indices[n], indices[n + 1]);
-    //             }
-    //         }
-    //     }
-
-    //     // Đếm số lần xuất hiện của mỗi nhãn trong k hàng xóm gần nhất
-    //     int* labelCounts = new int[10](); // Giả sử có 10 nhãn khác nhau
-    //     for (int m = 0; m < k; m++) {
-    //         int label = Y_train.getData()->get(indices[m])->get(0);
-    //         labelCounts[label]++;
-    //     }
-
-    //     // Tìm nhãn xuất hiện nhiều nhất
-    //     int mostFrequentLabel = 0;
-    //     for (int j = 1; j < 10; j++) {
-    //         if (labelCounts[j] > labelCounts[mostFrequentLabel]) {
-    //             mostFrequentLabel = j;
-    //         }
-    //     }
-
-    //     Image<int>* labelImage = new Image<int>(mostFrequentLabel);
-    //     y_pred.getData()->push_back(labelImage);
-
-    //     // Dọn dẹp bộ nhớ
-    //     delete[] distances;
-    //     delete[] indices;
-    //     delete[] labelCounts;
-    // }
-
-    //     return y_pred;
-    // }
     double score(const Dataset &y_test) const
     {
         if (y_test.data->length() != this->data->length() || y_test.data->length() == 0 || this->data->length() == 0)
@@ -728,7 +678,7 @@ void train_test_split(Dataset &X, Dataset &Y, double test_size,
     int nRow = X.getData()->length();
     int rowSplit = (int)(nRow * (1 - test_size));
 
-        X_train = X.extract(0, rowSplit - 1, 0, -1);
+    X_train = X.extract(0, rowSplit - 1, 0, -1);
     Y_train = Y.extract(0, rowSplit - 1, 0, -1);
 
     X_test = X.extract(rowSplit, -1, 0, -1);
