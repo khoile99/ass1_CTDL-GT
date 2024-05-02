@@ -229,38 +229,6 @@ public:
             arr[i] = this->get(i);
         }
     }
-    //     double distanceEuclidean(const Image<int>* x, const Image<int>* y) const{
-    //     if (x->length() != y->length()) {
-    //         throw std::out_of_range("get(): Out of range");
-    //     }
-
-    //     double distance = 0.0;
-    //     int lengthX = x->length();
-    //     int lengthY = y->length();
-    //     int* arrX = new int[lengthX];
-    //     x->getArray(arrX);
-
-    //     int* arrY = new int[lengthY];
-    //     y->getArray(arrY);
-
-    //     int minSize = std::min(lengthX, lengthY);
-
-    //     for(int i = 0; i < minSize; i++){
-    //         double diff = arrX[i] - arrY[i];
-    //         distance += diff * diff;
-    //     }
-    //     for (int i = minSize; i < lengthX; i++){
-    //         distance += arrX[i] * arrX[i];
-    //     }
-    //     for (int i = minSize; i < lengthY; i++){
-    //         distance += arrY[i] * arrY[i];
-    //     }
-
-    //     delete[] arrX;
-    //     delete[] arrY;
-
-    //     return sqrt(distance);
-    // }
 };
 
 class Dataset
@@ -525,10 +493,10 @@ public:
     {
         return this->data;
     }
-    Image<string> *getField()
-    {
-        return this->nameCol;
-    }
+    // Image<int> *getField(int index)
+    // {
+    //     return this->data->get(index);
+    // }
 
     double score(const Dataset &y_test) const
     {
@@ -624,7 +592,7 @@ public:
         {
             throw std::out_of_range("get(): Out of range");
         }
-        y_pred.getField()->push_back(Y_train.getField()->get(0));
+        // y_pred.getField()->push_back(Y_train.getField()->get(0));
 
         for (int i = 0; i < testSize; ++i)
         {
