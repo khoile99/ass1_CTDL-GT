@@ -1,6 +1,10 @@
 
 #include "main.hpp"
 
+/* TODO: Please design your data structure carefully so that you can work with the given dataset
+ *       in this assignment. The below structures are just some suggestions.
+ */
+
 template <typename T>
 class List
 {
@@ -225,6 +229,38 @@ public:
             arr[i] = this->get(i);
         }
     }
+    //     double distanceEuclidean(const Image<int>* x, const Image<int>* y) const{
+    //     if (x->length() != y->length()) {
+    //         throw std::out_of_range("get(): Out of range");
+    //     }
+
+    //     double distance = 0.0;
+    //     int lengthX = x->length();
+    //     int lengthY = y->length();
+    //     int* arrX = new int[lengthX];
+    //     x->getArray(arrX);
+
+    //     int* arrY = new int[lengthY];
+    //     y->getArray(arrY);
+
+    //     int minSize = std::min(lengthX, lengthY);
+
+    //     for(int i = 0; i < minSize; i++){
+    //         double diff = arrX[i] - arrY[i];
+    //         distance += diff * diff;
+    //     }
+    //     for (int i = minSize; i < lengthX; i++){
+    //         distance += arrX[i] * arrX[i];
+    //     }
+    //     for (int i = minSize; i < lengthY; i++){
+    //         distance += arrY[i] * arrY[i];
+    //     }
+
+    //     delete[] arrX;
+    //     delete[] arrY;
+
+    //     return sqrt(distance);
+    // }
 };
 
 class Dataset
@@ -489,11 +525,61 @@ public:
     {
         return this->data;
     }
-    Image<int> *getField(int index)
+    Image<string> *getField()
     {
-        return this->data->get(index);
+        return this->nameCol;
     }
+    // Dataset predict(const Dataset& X_train, const Dataset& Y_train, const int k) const
+    // {
+    //     if(k > X_train.getData()->length())
+    //         throw std::out_of_range("get(): Out of range");
 
+    //     Dataset y_pred;
+    //         for (int i = 0; i < X_test.getData()->length(); i++) {
+    //     double* distances = new double[X_train.getData()->length()];
+    //     int* indices = new int[X_train.getData()->length()];
+
+    //     for (int j = 0; j < X_train.getData()->length(); j++) {
+    //         distances[j] = distanceEuclidean(X_test.getData()->get(i), X_train.getData()->get(j));
+    //         indices[j] = j;
+    //     }
+
+    //     // Sắp xếp các khoảng cách tăng dần và giữ indices tương ứng
+    //     for (int m = 0; m < X_train.getData()->length() - 1; m++) {
+    //         for (int n = 0; n < X_train.getData()->length() - m - 1; n++) {
+    //             if (distances[n] > distances[n + 1]) {
+    //                 std::swap(distances[n], distances[n + 1]);
+    //                 std::swap(indices[n], indices[n + 1]);
+    //             }
+    //         }
+    //     }
+
+    //     // Đếm số lần xuất hiện của mỗi nhãn trong k hàng xóm gần nhất
+    //     int* labelCounts = new int[10](); // Giả sử có 10 nhãn khác nhau
+    //     for (int m = 0; m < k; m++) {
+    //         int label = Y_train.getData()->get(indices[m])->get(0);
+    //         labelCounts[label]++;
+    //     }
+
+    //     // Tìm nhãn xuất hiện nhiều nhất
+    //     int mostFrequentLabel = 0;
+    //     for (int j = 1; j < 10; j++) {
+    //         if (labelCounts[j] > labelCounts[mostFrequentLabel]) {
+    //             mostFrequentLabel = j;
+    //         }
+    //     }
+
+    //     Image<int>* labelImage = new Image<int>(mostFrequentLabel);
+    //     y_pred.getData()->push_back(labelImage);
+
+    //     // Dọn dẹp bộ nhớ
+    //     delete[] distances;
+    //     delete[] indices;
+    //     delete[] labelCounts;
+    // }
+
+    //     return y_pred;
+    // }
     double score(const Dataset &y_test) const
     {
         if (y_test.data->length() != this->data->length() || y_test.data->length() == 0 || this->data->length() == 0)
@@ -588,7 +674,7 @@ public:
         {
             throw std::out_of_range("get(): Out of range");
         }
-        y_pred.getField(5)->push_back(Y_train.getField(5)->get(0));
+        y_pred.getField()->push_back(Y_train.getField()->get(0));
 
         for (int i = 0; i < testSize; ++i)
         {
@@ -634,4 +720,17 @@ public:
 };
 
 void train_test_split(Dataset &X, Dataset &Y, double test_size,
-                      Dataset &X_train, Dataset &X_test, Dataset &Y_train, Dataset &Y_test);
+                      Dataset &X_train, Dataset &X_test, Dataset &Y_train, Dataset &Y_test)
+{
+    if (X.getData()->length() != Y.getData()->length() || test_size >= 1 || test_size <= 0)
+        return;
+
+    int nRow = X.getData()->length();
+    int rowSplit = (int)(nRow * (1 - test_size));
+
+        X_train = X.extract(0, rowSplit - 1, 0, -1);
+    Y_train = Y.extract(0, rowSplit - 1, 0, -1);
+
+    X_test = X.extract(rowSplit, -1, 0, -1);
+    Y_test = Y.extract(rowSplit, -1, 0, -1);
+}
